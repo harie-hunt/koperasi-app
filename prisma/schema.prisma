@@ -16,14 +16,26 @@ datasource db {
 }
 
 model User {
-  id       String    @id @default(uuid())
-  nama     String
-  username String
-  password String
-  createAt DateTime  @default(now())
-  sessions Session[]
+  id        String     @id @default(uuid())
+  nama      String
+  username  String     @unique
+  password  String
+  role      Role
+  createdAt DateTime   @default(now())
+  sessions  Session[]
+  anggotas  Anggota[]
+  simpanans Simpanan[]
+  pinjamans Pinjaman[]
+  Angsuran  Angsuran[]
 
-  @@index([createAt])
+  @@index([createdAt])
+  @@map("users")
+}
+
+enum Role {
+  BASIC
+  OPERATOR
+  ADMIN
 }
 
 model Session {
@@ -31,4 +43,94 @@ model Session {
   userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Anggota {
+  id            String     @id @default(uuid())
+  userId        String
+  no            String     @unique
+  nama          String
+  kelamin       Kelamin
+  tempatLahir   String?
+  tanggalLahir  DateTime
+  nik           BigInt     @unique
+  kk            BigInt?
+  pekerjaan     String?
+  alamat        String?
+  tanggalMasuk  DateTime
+  tanggalKeluar DateTime?
+  aktif         Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt()
+  user          User       @relation(fields: [userId], references: [id])
+  simpanans     Simpanan[]
+  pinjamans     Pinjaman[]
+  angsurans     Angsuran[]
+
+  @@index([createdAt])
+  @@map("anggotas")
+}
+
+enum Kelamin {
+  L
+  P
+}
+
+model Simpanan {
+  id        String        @id @default(uuid())
+  userId    String
+  anggotaId String
+  jenis     JenisSimpanan
+  tanggal   DateTime
+  tahun     Int?
+  bulan     Int?
+  nilai     Int
+  tutup     Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt()
+  user      User          @relation(fields: [userId], references: [id])
+  anggota   Anggota       @relation(fields: [anggotaId], references: [id])
+
+  @@index([createdAt])
+  @@map("simpanans")
+}
+
+enum JenisSimpanan {
+  wajib
+  pokok
+  tabungan
+}
+
+model Pinjaman {
+  id            String   @id @default(uuid())
+  userId        String
+  anggotaId     String
+  tanggal       DateTime
+  nilai         Int
+  jumlahBulan   Int
+  totalAngsuran Int
+  lunas         Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt()
+  user          User     @relation(fields: [userId], references: [id])
+  anggota       Anggota  @relation(fields: [anggotaId], references: [id])
+
+  @@index([createdAt])
+  @@map("pinjamans")
+}
+
+model Angsuran {
+  id        String   @id @default(uuid())
+  userId    String
+  anggotaId String
+  tanggal   DateTime
+  nilai     Int
+  bulanKe   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  user      User     @relation(fields: [userId], references: [id])
+  Anggota   Anggota  @relation(fields: [anggotaId], references: [id])
+
+  @@index([createdAt])
+  @@map("angsurans")
 }
