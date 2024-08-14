@@ -13,7 +13,7 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
-			'.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js'
+			'.prisma/client/index-browser': './node_modules/@prisma/client/index-browser.js'
 		}
 	}
 };
