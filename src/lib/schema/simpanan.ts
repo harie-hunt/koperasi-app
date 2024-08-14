@@ -1,9 +1,8 @@
-import { JenisSimpanan } from '@prisma/client';
 import { z } from 'zod';
 
 export const createSimpananSchema = z.object({
 	anggotaId: z.string().min(1, 'Wajib diisi !').uuid(),
-	jenis: z.nativeEnum(JenisSimpanan),
+	jenis: z.enum(['pokok', 'wajib', 'tabungan']),
 	tanggal: z.string().min(1, 'Wajib diisi !').pipe(z.coerce.date()),
 	nilai: z.string().min(1, 'Wajib diisi !').pipe(z.coerce.number()),
 	tahun: z.string().pipe(z.coerce.number()).catch(0),

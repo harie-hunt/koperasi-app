@@ -1,9 +1,8 @@
-import { Kelamin } from '@prisma/client';
 import { z } from 'zod';
 
 export const anggotaSchema = z.object({
 	nama: z.string().min(4).max(32).toUpperCase().trim(),
-	kelamin: z.nativeEnum(Kelamin),
+	kelamin: z.enum(['L', 'P']),
 	nik: z.string().min(16).max(16).pipe(z.coerce.number()),
 	kk: z
 		.string()
